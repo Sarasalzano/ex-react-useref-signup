@@ -1,8 +1,3 @@
-// Aggiungi una validazione al submit, verificando che:
-// Tutti i campi siano compilati
-// L'input Anni di esperienza sia un numero positivo
-// La Specializzazione sia selezionata
-// Al submit, se il form è valido, stampa in console i dati.
 import { useState } from "react";
 
 export default function FormComponent() {
@@ -15,6 +10,36 @@ export default function FormComponent() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (fullName !== "") {
+      console.log(fullName);
+    } else {
+      console.log("Inserisci il tuo nome e cognome");
+    }
+    if (userName !== "") {
+      console.log(userName);
+    } else {
+      console.log("Inserisci il tuo username");
+    }
+    if (password !== "") {
+      console.log(password);
+    } else {
+      console.log("Inserisci una password");
+    }
+    if (experience > 0) {
+      console.log(experience);
+    } else {
+      console.log("Inserisci anni di esperienza ");
+    }
+    if (devDescription !== "") {
+      console.log(devDescription);
+    } else {
+      console.log("Inserisci la descrizione");
+    }
+    if (specialization !== "") {
+      console.log(specialization);
+    } else {
+      console.log("Scegli la tua specializzazione");
+    }
   }
 
   return (
@@ -62,6 +87,7 @@ export default function FormComponent() {
       >
         About you
       </textarea>
+      <button type="submit">Invia</button>
     </form>
   );
 }
