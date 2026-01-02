@@ -1,18 +1,21 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 
 const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const numbers = "0123456789";
 const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
 
 export default function FormComponent() {
+  //campi controllati
   const [fullName, setFullName] = useState("");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [experience, setExperience] = useState(0);
-  const [devDescription, setDevDescription] = useState("");
-  const [specialization, setSpecialization] = useState("");
 
-  //VALIDAZIONE USERNAME
+  //campi non controllati
+  const experienceRef = useRef();
+  const descriptionRef = useRef();
+  const specializationRef = useRef();
+
+  //validazione username
   const isUsernameValid = useMemo(() => {
     if (userName.trim().length < 6) return false;
     return userName
@@ -20,7 +23,7 @@ export default function FormComponent() {
       .every((char) => letters.includes(char) || numbers.includes(char));
   }, [userName]);
 
-  //VALIDAZIONE PASSWORD
+  //validazione password
   const isPasswordValid = useMemo(() => {
     const hasLetter = password.split("").some((char) => letters.includes(char));
     const hasNumber = password.split("").some((char) => numbers.includes(char));
@@ -28,23 +31,24 @@ export default function FormComponent() {
     return password.trim().length >= 8 && hasLetter && hasNumber && hasSymbol;
   }, [password]);
 
-  //VALIDAZIONE DESCRIZIONE
-  const isDescriptionValid = useMemo(() => {
-    const len = devDescription.trim().length;
-    return len >= 100 && len <= 1000;
-  }, [devDescription]);
-
   function handleSubmit(e) {
     e.preventDefault();
+
+    const experience = Number(experienceRef.current.value);
+    const specialization = specializationRef.current.value;
+    const devDescription = descriptionRef.current.value;
 
     if (!fullName.trim()) return alert("Inserisci il tuo nome e cognome");
     if (!isUsernameValid) return alert("Username non valido");
     if (!isPasswordValid) return alert("Password non valida");
     if (experience <= 0) return alert("Inserisci anni di esperienza validi");
-    if (!isDescriptionValid) return alert("Descrizione non valida");
+    if (
+      devDescription.trim().length < 100 ||
+      devDescription.trim().length > 1000
+    )
+      return alert("Descrizione non valida");
     if (!specialization) return alert("Scegli la tua specializzazione");
 
-    // Se tutto valido
     console.log({
       fullName,
       userName,
@@ -59,6 +63,7 @@ export default function FormComponent() {
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Nome completo */}
       <input
         type="text"
         placeholder="Nome Completo"
@@ -66,6 +71,7 @@ export default function FormComponent() {
         onChange={(e) => setFullName(e.target.value)}
       />
 
+      {/* Username */}
       <input
         type="text"
         placeholder="Username"
@@ -80,6 +86,7 @@ export default function FormComponent() {
         </p>
       )}
 
+      {/* Password */}
       <input
         type="password"
         placeholder="Password"
@@ -94,35 +101,23 @@ export default function FormComponent() {
         </p>
       )}
 
-      <select
-        value={specialization}
-        onChange={(e) => setSpecialization(e.target.value)}
-      >
+      {/* Specializzazione (non controllata) */}
+      <select ref={specializationRef}>
         <option value="">Scegli un'opzione</option>
         <option value="full-stack">Full Stack</option>
         <option value="front-end">Front End</option>
         <option value="back-end">Back End</option>
       </select>
 
+      {/* Anni di esperienza (non controllata) */}
       <input
         type="number"
         placeholder="Years of Experience"
-        value={experience}
-        onChange={(e) => setExperience(Number(e.target.value))}
+        ref={experienceRef}
       />
 
-      <textarea
-        placeholder="Breve descrizione"
-        value={devDescription}
-        onChange={(e) => setDevDescription(e.target.value)}
-      />
-      {devDescription && (
-        <p style={{ color: isDescriptionValid ? "green" : "red" }}>
-          {isDescriptionValid
-            ? "Descrizione valida"
-            : "Deve contenere tra 100 e 1000 caratteri."}
-        </p>
-      )}
+      {/* Descrizione (non controllata) */}
+      <textarea placeholder="Breve descrizione" ref={descriptionRef} />
 
       <button type="submit">Invia</button>
     </form>
